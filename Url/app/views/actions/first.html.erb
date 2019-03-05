@@ -1,0 +1,19 @@
+
+<h1> Links under URL : <u style="color: blue"><%= $url %></u></h1>
+<table >
+      <tr>
+        <th> Links </th>
+        <th>Second Level Links </th>
+      </tr>
+  <% @arr.each do |keys, value| %>
+      <tr>
+          <% if (value !="#" ) %>
+                <td><%= value  %></td>
+                <td> <%= link_to "Click here", actions_second_path(keys) %> </td>
+           <% end %>
+      </tr>
+  <% end %>
+</table>
+
+
+

@@ -1,0 +1,17 @@
+<h1> Links under URL : <u style="color: blue"><%= @url1 %></u></h1>
+<table >
+      <tr>
+        <th> Links </th>
+        <th>Second Level Links </th>
+      </tr>
+  <% @arrr.each do |keys, value| %>
+      <tr>
+          <% if (value !="#" ) %>
+                <td><%= value  %></td>
+                <td> Last Level </td>
+           <% end %>
+      </tr>
+  <% end %>
+</table>
+
+<p><%= $First_link.keys %></p>
