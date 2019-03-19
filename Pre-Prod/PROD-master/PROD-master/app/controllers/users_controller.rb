@@ -59,8 +59,10 @@ class UsersController < ApplicationController
         else
             
          
-        #  flash[:notice] = @userdetials.errors.full_messages
-         render 
+        #flash[:notice] = @userdetials.errors.full_messages
+         render 'new'
+         
+         
         end
         
        

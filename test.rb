@@ -1,124 +1,62 @@
-require 'rubygems'
-require 'write_xlsx'
+# require 'mechanize'
+
+# agent = Mechanize.new
+# agent.user_agent_alias = 'Android'
+# login_page = agent.get('https://m.facebook.com/')
+# login_form = agent.page.form_with(:method => 'POST')
+# login_form.email = '9844550498'
+# login_form.pass = '9449138995'
+# form=agent.submit(login_form)
+
+
+# pp form.link
 
 
 
+require 'selenium-webdriver'
+class SiteElement
 
-# Create a new Excel workbook
-$workbook = WriteXLSX.new('ruby.xlsx')
-# Add a worksheet
-$worksheet = $workbook.add_worksheet
-
-
-$format1 = $workbook.add_format # Add a format
-$format1.set_bold
-$format1.set_color('red')
-
-
-
-$format2 = $workbook.add_format # Add a format
-$format2.set_bold
-$format2.set_color('green')
-# format2.set_align('center')
-
-$format3 = $workbook.add_format # Add a format
-$format3.set_bold
-$format3.set_color('yellow')
-# format3.set_align('center')
-
-$e=$c=0
-$col = $row = 0
-
-def write_excle(values, formate)
-      if $e <= 65500 and 
-         $worksheet.write($e,   $col, values, formate)
-         $e=$e + 1
-      else
-         $worksheet.write($c,   1, values, formate)
-         $c=$c + 1
-         if $c >= 65500 and values
-             $workbook.close
-             exit
-         end
-      end
-     
-     
-    $e=$e+1
-end
-
-
-require "mechanize"
-$url="http://stackoverflow.com"
-
- def for_url(ar, url)
-         puts ar
-        if ar[0..3]=="http"
-          return ar
-        else 
-          return ar << url
-        end
- end
-
-
-def links1(link)
-      i=0
-      arr={}
-      mechanize = Mechanize.new
-        begin
-              page = mechanize.get(link)
-                page.links.each do |link|
-                  arr[i]=link.href
-                  i= i + 1
-                end
-              return arr
-        
-        rescue StandardError => e
-        
-          puts "Link not exist.."
-          return nil
-          p e
-          
-        ensure
-        
-          page = nil
-          
-        end
+  def initialize(url)
+    @driver=Selenium::WebDriver.for :chrome
+    @driver.manage.window.maximize
+    @driver.navigate.to url
   end
-
-
-arr=links1($url)
-
-arr.each do |key, value|
-    
-    
-    if value !="#" and value != nil
-        
-        url1=for_url(value, $url)
-        arr1=links1(url1)
-        write_excle(value, $format1)
-        if arr1 != nil
-            arr1.each do |key1, value1|
-                if value1 != "#" and value1 != nil
-                    url2=for_url(value1,url1)
-                    arr2=links1(url2)
-                    write_excle(value1, $format2)
-                    if arr2 != nil
-                        arr2.each do |key2, value2|
-                            if value2 != "#" and value2 != nil
-                                if value2.length <= 250
-                                    write_excle(value2, $format3)
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    
+  def login_username()
+    return @driver.find_element(:id,'login_login_username')
+  end
+  def login_password()
+    return @driver.find_element(:id,'login_login_password')
+  end
+  def submit_button()
+    return @driver.find_element(:id,'login_submit')
+  end
+  def logout_link()
+    @driver.find_element(:link_text,'Logout')
+  end
+  def close_browser()
+    @driver.quit
+  end
 end
 
-$workbook.close
+# require_relative 'site_element.rb'
+    #define new browser
+browser=SiteElement.new("http://demo.mahara.org")
 
+    #input user name
+browser.login_username.send_keys('Student1')
 
+    #input password
+browser.login_password.send_keys('Testing1')
 
+    #click on submit button
+browser.submit_button.click
+
+    #wait until the Logout link displays, timeout in 10 seconds
+wait = Selenium::WebDriver::Wait.new(:timeout => 10) # seconds
+wait.until {browser.logout_link }
+
+    #if logout link is displayed
+isLogoutLinkDisplayed=browser.logout_link.displayed?
+
+puts isLogoutLinkDisplayed
+browser.close_browser
